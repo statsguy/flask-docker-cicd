@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    image: your-dockerhub-username/flask-app:main
+    image: lejyoner1985/flask-docker-cicd:main
     container_name: flask-app-prod
     restart: always
     ports:

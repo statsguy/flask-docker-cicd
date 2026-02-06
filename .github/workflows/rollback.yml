@@ -20,8 +20,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/flask-app
-            docker pull your-dockerhub-username/flask-app:${{ github.event.inputs.version }}
-            sed -i 's/image: .*/image: your-dockerhub-username\/flask-app:${{ github.event.inputs.version }}/g' docker-compose.prod.yml
+            docker pull lejyoner1985/flask-docker-cicd:${{ github.event.inputs.version }}
+            sed -i 's/image: .*/image: lejyoner1985\/flask-docker-cicd:${{ github.event.inputs.version }}/g' docker-compose.prod.yml
             docker-compose -f docker-compose.prod.yml up -d
             sleep 10
             curl -f http://localhost:5000/health || exit 1
