@@ -20,7 +20,7 @@ CMD ["python", "app.py"]
 # Test stage (for CI)
 FROM base AS test
 USER root
-RUN pip install --no-cache-dir pytest
+RUN pip install --no-cache-dir pytest flake8
 COPY test_app.py .
 USER appuser
 CMD ["pytest", "-v"]

@@ -27,7 +27,7 @@ jobs:
 
       - name: Run linting
         run: |
-          docker run --rm my-app:test sh -c "pip install flake8 && flake8 app.py --max-line-length=120"
+          docker run --rm my-app:test sh -c "flake8 app.py --max-line-length=120"
 
   security-scan:
     runs-on: ubuntu-latest
