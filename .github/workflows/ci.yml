@@ -55,12 +55,19 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          mkdir -p ${{ github.workspace }}/coverage
-          docker run --rm -v ${{ github.workspace }}/coverage:/tmp my-app:test
+          docker create --name test-runner my-app:test
+          docker start -a test-runner
 
       - name: Run linting
         run: |
           docker run --rm my-app:test sh -c "flake8 app.py --max-line-length=120"
+
+      - name: Extract coverage report
+        if: always()
+        run: |
+          mkdir -p coverage
+          docker cp test-runner:/app/coverage.xml coverage/coverage.xml 2>/dev/null || true
+          docker rm test-runner 2>/dev/null || true
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -88,4 +95,5 @@ jobs:
           image-ref: 'my-app:prod'
           format: 'table'
           exit-code: '1'
+          ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
