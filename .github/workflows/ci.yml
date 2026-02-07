@@ -62,11 +62,12 @@ jobs:
         run: |
           docker run --rm my-app:test sh -c "flake8 app.py --max-line-length=120"
 
-      - name: Extract coverage report
+      - name: Extract coverage reports
         if: always()
         run: |
           mkdir -p coverage
           docker cp test-runner:/app/coverage.xml coverage/coverage.xml 2>/dev/null || true
+          docker cp test-runner:/app/htmlcov coverage/htmlcov 2>/dev/null || true
           docker rm test-runner 2>/dev/null || true
 
       - name: Upload coverage report
@@ -74,7 +75,9 @@ jobs:
         if: always()
         with:
           name: coverage-report
-          path: coverage/coverage.xml
+          path: |
+            coverage/coverage.xml
+            coverage/htmlcov
           retention-days: 30
 
   security-scan:
