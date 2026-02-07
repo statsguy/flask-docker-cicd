@@ -20,7 +20,7 @@ CMD ["python", "app.py"]
 # Test stage (for CI)
 FROM base AS test
 USER root
-RUN pip install --no-cache-dir pytest flake8
+RUN pip install --no-cache-dir pytest pytest-cov flake8
 COPY test_app.py .
 USER appuser
-CMD ["pytest", "-v"]
+CMD ["pytest", "-v", "--cov=app", "--cov-report=term-missing", "--cov-report=xml:/tmp/coverage.xml"]

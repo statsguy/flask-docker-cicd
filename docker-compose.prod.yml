@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   web:
-    image: lejyoner1985/flask-docker-cicd:main
+    image: lejyoner1985/flask-docker-cicd:${DOCKER_IMAGE_TAG:-main}
     container_name: flask-app-prod
     restart: always
     ports:
@@ -17,6 +15,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - app-network
     deploy:

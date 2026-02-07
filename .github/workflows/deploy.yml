@@ -7,30 +7,63 @@ on:
       - completed
     branches: [main]
 
+env:
+  DOCKER_IMAGE: lejyoner1985/flask-docker-cicd
+  DEPLOY_DIR: /home/ubuntu/flask-app
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@master
+      - name: Deploy new version via SSH
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/flask-app
+            cd ${{ env.DEPLOY_DIR }}
             git pull origin main
-            docker pull lejyoner1985/flask-docker-cicd:main
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml up -d
+            docker pull ${{ env.DOCKER_IMAGE }}:main
+            docker compose -f docker-compose.prod.yml up -d --wait
             docker image prune -af
 
-      - name: Health check
+      - name: Health check with retry
+        id: health-check
         run: |
-          sleep 10
-          curl -f http://${{ secrets.SERVER_HOST }}/health || exit 1
+          MAX_RETRIES=12
+          RETRY_INTERVAL=5
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Health check attempt $i/$MAX_RETRIES..."
+            if curl -sf --max-time 5 "http://${{ secrets.SERVER_HOST }}/health"; then
+              echo ""
+              echo "Health check passed on attempt $i"
+              exit 0
+            fi
+            echo "Attempt $i failed. Waiting ${RETRY_INTERVAL}s..."
+            sleep $RETRY_INTERVAL
+          done
+
+          echo "Health check failed after $MAX_RETRIES attempts"
+          exit 1
+
+      - name: Rollback on failure
+        if: failure() && steps.health-check.outcome == 'failure'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ env.DEPLOY_DIR }}
+            echo "ROLLING BACK: Health check failed for new deployment"
+            echo "Reverting to previous version..."
+            git checkout HEAD~1 -- docker-compose.prod.yml
+            docker compose -f docker-compose.prod.yml up -d --wait
+            echo "Rollback complete."
