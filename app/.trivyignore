@@ -1,0 +1,5 @@
+# Build-time Python packages in base image (not used at runtime)
+# jaraco.context: path traversal in tar extraction - not used by our app
+CVE-2026-23949
+# wheel: privilege escalation via malicious wheel file - build-time only
+CVE-2026-24049
