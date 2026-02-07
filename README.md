@@ -32,20 +32,37 @@ A production-ready Flask application with Docker containerization and complete C
    cp .env.example .env
 ```
 
-2. **Start services:**
+2. **Start services** (full stack: web, db, redis, adminer):
 ```bash
-   docker-compose up -d
+   ./scripts/run-full-stack.sh
 ```
+   Or in the background: `docker compose up -d`
 
 3. **Access:**
    - Flask App: http://localhost:5000
    - Database Admin: http://localhost:8080
    - API Health: http://localhost:5000/health
 
-4. **Run tests:**
+4. **Run tests (in dev stack):**
 ```bash
    docker-compose exec web pytest -v
 ```
+
+5. **Build and run the test image locally** (same image as CI):
+```bash
+   ./scripts/run-test-image.sh
+```
+   Or manually:
+```bash
+   docker build --target test -t flask-docker-cicd:test ./app
+   docker run --rm flask-docker-cicd:test
+```
+
+6. **Build and run the app image locally** (app only, no db/redis; same port as dev):
+```bash
+   ./scripts/run-app-image.sh
+```
+   Uses `docker-compose.app-only.yml` so port mapping stays in compose. App at http://localhost:5000. Stop `docker-compose` first if that port is in use. Ctrl+C to stop.
 
 ## API Endpoints
 

@@ -1,0 +1,10 @@
+# Run only the app image (no db/redis). Use for quick local testing.
+# Port matches docker-compose.yml so dev and "app only" use the same URL.
+services:
+  app:
+    image: flask-docker-cicd:app
+    container_name: flask-app-standalone
+    ports:
+      - "5000:5000"
+    environment:
+      - ENV=development
