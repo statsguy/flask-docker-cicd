@@ -9,8 +9,8 @@ if [[ ! -f .env ]]; then
 fi
 
 echo "Starting full stack (Flask, Postgres, Redis, Adminer)..."
-echo "  - Flask:    http://localhost:5000"
-echo "  - Health:   http://localhost:5000/health"
+echo "  - Flask:    http://localhost:5001"
+echo "  - Health:   http://localhost:5001/health"
 echo "  - Adminer:  http://localhost:8080"
 echo "Ctrl+C to stop"
 echo ""

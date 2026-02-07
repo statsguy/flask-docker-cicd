@@ -39,9 +39,9 @@ A production-ready Flask application with Docker containerization and complete C
    Or in the background: `docker compose up -d`
 
 3. **Access:**
-   - Flask App: http://localhost:5000
+   - Flask App: http://localhost:5001
    - Database Admin: http://localhost:8080
-   - API Health: http://localhost:5000/health
+   - API Health: http://localhost:5001/health
 
 4. **Run tests (in dev stack):**
 ```bash
@@ -62,7 +62,7 @@ A production-ready Flask application with Docker containerization and complete C
 ```bash
    ./scripts/run-app-image.sh
 ```
-   Uses `docker-compose.app-only.yml` so port mapping stays in compose. App at http://localhost:5000. Stop `docker-compose` first if that port is in use. Ctrl+C to stop.
+   Uses `docker-compose.app-only.yml` so port mapping stays in compose. App at http://localhost:5001. Stop `docker-compose` first if that port is in use. Ctrl+C to stop.
 
 ## API Endpoints
 
