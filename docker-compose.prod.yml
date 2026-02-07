@@ -3,6 +3,7 @@ services:
     image: lejyoner1985/flask-docker-cicd:${DOCKER_IMAGE_TAG:-main}
     container_name: flask-app-prod
     restart: always
+    command: ["python", "app.py"]
     ports:
       - "5000:5000"
     environment:

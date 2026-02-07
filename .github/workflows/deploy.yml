@@ -21,7 +21,7 @@ jobs:
         run: |
           cd ${{ env.DEPLOY_DIR }}
           git pull origin main
-          docker build -t ${{ env.DOCKER_IMAGE }}:main ./app
+          docker build --target base -t ${{ env.DOCKER_IMAGE }}:main ./app
           docker compose -f docker-compose.prod.yml up -d --wait
           docker image prune -af
 
